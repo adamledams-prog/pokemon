@@ -13,7 +13,12 @@ export function createDefaultGameState() {
         deck: [],
         maxDeckSize: GAME_CONFIG.DEFAULT_MAX_DECK_SIZE,
         currentCard: null,
-        cardVisible: false
+        cardVisible: false,
+        quests: [
+            { id: 1, completed: false, claimed: false, unlocked: true },
+            { id: 2, completed: false, claimed: false, unlocked: false },
+            { id: 3, completed: false, claimed: false, unlocked: false }
+        ]
     };
 }
 
@@ -45,6 +50,13 @@ export function loadGameState() {
         }
         if (typeof state.money !== 'number') {
             state.money = GAME_CONFIG.STARTING_MONEY;
+        }
+        if (!state.quests || !Array.isArray(state.quests)) {
+            state.quests = [
+                { id: 1, completed: false, claimed: false, unlocked: true },
+                { id: 2, completed: false, claimed: false, unlocked: false },
+                { id: 3, completed: false, claimed: false, unlocked: false }
+            ];
         }
         
         return state;

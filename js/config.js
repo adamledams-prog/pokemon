@@ -13,25 +13,27 @@ export const GAME_CONFIG = {
 
 // Base de données des cartes
 export const CARDS_DATABASE = [
-    { name: "Magicarpe", rarity: "Commune", price: 10, income: 2 },
-    { name: "Rattata", rarity: "Commune", price: 10, income: 2 },
-    { name: "Dracaufeu", rarity: "Rare", price: 15, income: 3 },
-    { name: "Tortank", rarity: "Rare", price: 15, income: 3 },
-    { name: "Florizarre", rarity: "Rare", price: 15, income: 3 },
-    { name: "Mewtwo", rarity: "Épique", price: 20, income: 5 },
-    { name: "Lugia", rarity: "Épique", price: 20, income: 5 },
-    { name: "Ho-Oh", rarity: "Épique", price: 20, income: 5 },
-    { name: "Rayquaza", rarity: "Épique", price: 20, income: 5 },
-    { name: "Mew", rarity: "Mythique", price: 35, income: 10 },
-    { name: "Celebi", rarity: "Mythique", price: 35, income: 10 },
-    { name: "Arceus", rarity: "Légendaire", price: 50, income: 15 },
+    { name: "Magicarpe", rarity: "Épique", price: 15, income: 3 },
+    { name: "Rattata", rarity: "Épique", price: 15, income: 3 },
+    { name: "Dracaufeu", rarity: "Épique", price: 15, income: 3 },
+    { name: "Tortank", rarity: "Épique", price: 15, income: 3 },
+    { name: "Florizarre", rarity: "Épique", price: 15, income: 3 },
+    { name: "Mewtwo", rarity: "Mythique", price: 25, income: 5 },
+    { name: "Lugia", rarity: "Mythique", price: 25, income: 5 },
+    { name: "Ho-Oh", rarity: "Mythique", price: 25, income: 5 },
+    { name: "Rayquaza", rarity: "Mythique", price: 25, income: 5 },
+    { name: "Arceus", rarity: "Légendaire", price: 50, income: 7 },
+    { name: "Mew", rarity: "Légendaire", price: 50, income: 7 },
+    { name: "Celebi", rarity: "Légendaire", price: 50, income: 7 },
+    { name: "Mega Dracaufeu", rarity: "Mega", price: 200, income: 15 },
+    { name: "Mega Mewtwo", rarity: "Mega", price: 200, income: 15 },
+    { name: "Mega Rayquaza", rarity: "Mega", price: 200, income: 15 },
 ];
 
 // Styles de rareté
 export const RARITY_STYLES = {
-    "Commune": { emoji: "⚪", color: "#cbd5e0" },
-    "Rare": { emoji: "🔵", color: "#90cdf4" },
     "Épique": { emoji: "✨", color: "#9b59b6" },
-    "Mythique": { emoji: "💫", color: "#fbb6ce" },
-    "Légendaire": { emoji: "🌟", color: "#fbd38d" }
+    "Mythique": { emoji: "💫", color: "#e74c3c" },
+    "Légendaire": { emoji: "🌟", color: "#f1c40f" },
+    "Mega": { emoji: "🔥", color: "#3498db" }
 };

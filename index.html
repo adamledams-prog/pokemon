@@ -9,6 +9,7 @@
 </head>
 <body>
     <button id="place-btn" class="place-btn">Place</button>
+    <button id="quest-btn" class="quest-btn">🎯 Quêtes</button>
 
     <div class="shop-container">
         <h2>🛒 Boutique</h2>
@@ -26,6 +27,14 @@
     <div class="deck-container">
         <h2>📦 Mon Deck</h2>
         <div id="deck"></div>
+    </div>
+
+    <div id="quest-panel" class="quest-panel" style="display: none;">
+        <div class="quest-panel-content">
+            <button class="quest-close-btn" id="quest-close">×</button>
+            <h2>🎯 Quêtes</h2>
+            <div id="quests-list"></div>
+        </div>
     </div>
 
     <script type="module" src="js/game.js"></script>
