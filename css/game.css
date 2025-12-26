@@ -1,0 +1,221 @@
+/* Styles de la page principale du jeu */
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Bouton Place */
+.place-btn {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    padding: 15px 40px;
+    background: white;
+    color: #8e44ad;
+    border: 3px solid #8e44ad;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.place-btn:hover:not(:disabled) {
+    background: #8e44ad;
+    color: white;
+    transform: scale(1.1);
+}
+
+.place-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Affichage du nombre de cartes dans le deck */
+.deck-count-display {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* Boutique */
+.shop-container {
+    position: fixed;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    width: 300px;
+}
+
+.shop-container h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#shop-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.shop-card {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(155, 89, 182, 0.4);
+    color: white;
+    transition: all 0.3s;
+}
+
+.shop-card.clickable {
+    cursor: pointer;
+}
+
+.shop-card.clickable:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(155, 89, 182, 0.6);
+}
+
+.shop-card.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.card-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-rarity {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    margin-bottom: 10px;
+}
+
+.card-info {
+    font-size: 0.95em;
+    margin: 5px 0;
+}
+
+.card-price {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+/* Affichage de l'argent */
+.money-display {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    font-size: 2em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* Container du deck */
+.deck-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    min-width: 500px;
+    max-width: 700px;
+}
+
+.deck-container h2 {
+    color: #667eea;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#deck {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.deck-card {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(155, 89, 182, 0.4);
+    color: white;
+    min-width: 150px;
+    animation: cardAppear 0.5s;
+    position: relative;
+}
+
+.deck-card-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.deck-card-income {
+    font-size: 0.9em;
+    color: #b4f8c8;
+}
+
+.sell-btn {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    background: #f56565;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.sell-btn:hover {
+    background: #e53e3e;
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .shop-container {
+        left: 20px;
+        width: 250px;
+    }
+    
+    .deck-container {
+        min-width: 400px;
+    }
+}

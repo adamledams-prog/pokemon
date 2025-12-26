@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu de Collection de Cartes</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+    <button id="place-btn" class="place-btn">Place</button>
+
+    <div class="shop-container">
+        <h2>🛒 Boutique</h2>
+        <div id="shop-cards"></div>
+    </div>
+
+    <div class="money-display">
+        💰 <span id="money">20</span>$
+    </div>
+
+    <div class="deck-count-display">
+        📦 Deck: <span id="deck-count">0</span>
+    </div>
+
+    <div class="deck-container">
+        <h2>📦 Mon Deck</h2>
+        <div id="deck"></div>
+    </div>
+
+    <script type="module" src="js/game.js"></script>
+</body>
+</html>
