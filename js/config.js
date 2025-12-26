@@ -5,7 +5,7 @@ export const GAME_CONFIG = {
     DEFAULT_MAX_DECK_SIZE: 4,
     CARD_VISIBLE_TIME: 3000, // 3 secondes
     CARD_HIDDEN_TIME: 1000, // 1 seconde
-    INCOME_INTERVAL: 1000, // 1 seconde
+    INCOME_INTERVAL: 5000, // 5 secondes
     SELL_PRICE: 10,
     DECK_UPGRADE_PRICE: 80,
     UPGRADED_DECK_SIZE: 6
@@ -28,6 +28,7 @@ export const CARDS_DATABASE = [
     { name: "Mega Dracaufeu", rarity: "Mega", price: 200, income: 15 },
     { name: "Mega Mewtwo", rarity: "Mega", price: 200, income: 15 },
     { name: "Mega Rayquaza", rarity: "Mega", price: 200, income: 15 },
+    { name: "Super Mario", rarity: "Secret", price: 0, income: 50 },
 ];
 
 // Styles de rareté
@@ -35,5 +36,6 @@ export const RARITY_STYLES = {
     "Épique": { emoji: "✨", color: "#9b59b6" },
     "Mythique": { emoji: "💫", color: "#e74c3c" },
     "Légendaire": { emoji: "🌟", color: "#f1c40f" },
-    "Mega": { emoji: "🔥", color: "#3498db" }
+    "Mega": { emoji: "🔥", color: "#3498db" },
+    "Secret": { emoji: "⚫", color: "#1a1a1a" }
 };

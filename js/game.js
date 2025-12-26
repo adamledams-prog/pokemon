@@ -68,6 +68,7 @@ function startCardRotation() {
 /**
  * Affiche une nouvelle carte aléatoire avec probabilités
  * 61% Épique, 25% Mythique, 10% Légendaire, 4% Mega
+ * Les cartes Secret sont exclues (quêtes uniquement)
  */
 function showNewCard() {
     const random = Math.random();
@@ -238,6 +239,18 @@ function checkQuests() {
         saveGameState(gameState);
     }
     
+    // Quête 3 : Avoir 4000$, 4 légendaires et 2 Mega
+    if (!quest3.completed) {
+        const legendaryCount = gameState.deck.filter(card => card.rarity === "Légendaire").length;
+        const megaCount = gameState.deck.filter(card => card.rarity === "Mega").length;
+        const hasMoney = gameState.money >= 4000;
+        
+        if (hasMoney && legendaryCount >= 4 && megaCount >= 2) {
+            quest3.completed = true;
+            saveGameState(gameState);
+        }
+    }
+    
     // Déverrouillage de la quête 2 si la quête 1 est réclamée
     if (quest1.claimed && !quest2.unlocked) {
         quest2.unlocked = true;
@@ -275,9 +288,13 @@ function renderQuests() {
         {
             id: 3,
             title: "⭐ Quête Ultime",
-            description: "À venir...",
-            reward: "🎁 Surprise",
-            check: () => false
+            description: "Avoir 4000$ + 4 Légendaires + 2 Mega dans le deck",
+            reward: "⚫ Super Mario (Secret: +50$/s)",
+            check: () => {
+                const legendaryCount = gameState.deck.filter(card => card.rarity === "Légendaire").length;
+                const megaCount = gameState.deck.filter(card => card.rarity === "Mega").length;
+                return gameState.money >= 4000 && legendaryCount >= 4 && megaCount >= 2;
+            }
         }
     ];
     
@@ -343,6 +360,16 @@ function claimQuest(questIndex) {
         
         // Déverrouiller quête 3
         gameState.quests[2].unlocked = true;
+    } else if (questIndex === 2) {
+        // Quête 3 : Super Mario (Secret)
+        const superMario = CARDS_DATABASE.find(card => card.name === "Super Mario");
+        if (superMario) {
+            gameState.deck.push({
+                ...superMario,
+                purchaseId: Date.now() + Math.random()
+            });
+            alert('🎉 Vous avez débloqué Super Mario ! Carte Secret : +50$/s');
+        }
     }
     
     saveGameState(gameState);
