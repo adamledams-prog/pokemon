@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combat</title>
+    <link rel="stylesheet" href="../css/battle.css">
+</head>
+<body>
+    <a href="../index.html" class="back-btn">← Retour</a>
+    
+    <div class="timer-display">
+        ⏱️ <span id="timer">30</span>s
+    </div>
+    
+    <div class="score-display">
+        💯 Score: <span id="score">0</span>
+    </div>
+    
+    <div class="battle-container">
+        <h1>⚔️ Mini-Jeu de Combat</h1>
+        <p class="instructions">Reliez les points de même couleur avant la fin du timer !</p>
+        
+        <div class="cable-game">
+            <canvas id="game-canvas"></canvas>
+            
+            <div class="points-container left-points" id="left-points">
+                <div class="point orange" data-color="orange" data-side="left" data-id="0"></div>
+                <div class="point red" data-color="red" data-side="left" data-id="1"></div>
+                <div class="point green" data-color="green" data-side="left" data-id="2"></div>
+            </div>
+            
+            <div class="points-container right-points" id="right-points">
+                <div class="point orange" data-color="orange" data-side="right" data-id="0"></div>
+                <div class="point red" data-color="red" data-side="right" data-id="1"></div>
+                <div class="point green" data-color="green" data-side="right" data-id="2"></div>
+            </div>
+        </div>
+        
+        <div id="result-message" class="result-message"></div>
+    </div>
+    
+    <script src="../js/battle.js"></script>
+</body>
+</html>

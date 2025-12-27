@@ -58,6 +58,30 @@ body {
     transform: none;
 }
 
+/* Bouton Attaquer */
+.attack-btn {
+    position: fixed;
+    bottom: 130px;
+    right: 30px;
+    padding: 20px 50px;
+    background: #e74c3c;
+    color: white;
+    border: 3px solid #c0392b;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.8em;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(231, 76, 60, 0.5);
+    z-index: 1000;
+}
+
+.attack-btn:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+    box-shadow: 0 8px 30px rgba(231, 76, 60, 0.7);
+}
+
 /* Affichage du nombre de cartes dans le deck */
 .deck-count-display {
     position: fixed;
@@ -365,4 +389,160 @@ body {
 .claim-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.5);
+}
+
+/* Panneau de combat */
+.battle-panel-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideIn 0.3s;
+}
+
+.battle-panel-content h2 {
+    color: #1a4d2e;
+    margin-bottom: 10px;
+    font-size: 2.5em;
+    text-align: center;
+}
+
+.timer-display-battle {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(231, 76, 60, 0.5);
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.battle-instructions {
+    color: #666;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Jeu de câbles */
+.cable-game {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c5e1a5 100%);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Points */
+.points-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    padding: 20px 0;
+}
+
+.left-points {
+    left: 40px;
+}
+
+.right-points {
+    right: 40px;
+}
+
+.point {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    border: 5px solid white;
+    position: relative;
+}
+
+.point:hover {
+    transform: scale(1.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.point.selected {
+    transform: scale(1.3);
+    box-shadow: 0 0 20px currentColor;
+    animation: pulse 0.5s infinite;
+}
+
+.point.connected {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1.3);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+}
+
+/* Couleurs des points */
+.point.orange {
+    background: linear-gradient(135deg, #ff9a3c, #ff6b35);
+    box-shadow: 0 8px 20px rgba(255, 154, 60, 0.6);
+}
+
+.point.red {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+}
+
+.point.green {
+    background: linear-gradient(135deg, #51cf66, #37b24d);
+    box-shadow: 0 8px 20px rgba(81, 207, 102, 0.6);
+}
+
+/* Message de résultat */
+.result-message-battle {
+    font-size: 1.8em;
+    font-weight: bold;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    min-height: 70px;
+    text-align: center;
+}
+
+.result-message-battle.success {
+    background: linear-gradient(135deg, #51cf66, #37b24d);
+    color: white;
+}
+
+.result-message-battle.failure {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: white;
 }

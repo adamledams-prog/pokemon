@@ -10,6 +10,7 @@
 <body>
     <button id="place-btn" class="place-btn">Place</button>
     <button id="quest-btn" class="quest-btn">🎯 Quêtes</button>
+    <button id="attack-btn" class="attack-btn">⚔️ Attaquer</button>
 
     <div class="shop-container">
         <h2>🛒 Boutique</h2>
@@ -34,6 +35,35 @@
             <button class="quest-close-btn" id="quest-close">×</button>
             <h2>🎯 Quêtes</h2>
             <div id="quests-list"></div>
+        </div>
+    </div>
+
+    <div id="battle-panel" class="quest-panel" style="display: none;">
+        <div class="battle-panel-content">
+            <button class="quest-close-btn" id="battle-close">×</button>
+            <div class="timer-display-battle">
+                ⏱️ <span id="timer-battle">30</span>s
+            </div>
+            <h2>⚔️ Mini-Jeu de Combat</h2>
+            <p class="battle-instructions">Reliez les points de même couleur avant la fin du timer !</p>
+            
+            <div class="cable-game">
+                <canvas id="game-canvas"></canvas>
+                
+                <div class="points-container left-points" id="left-points">
+                    <div class="point orange" data-color="orange" data-side="left" data-id="0"></div>
+                    <div class="point red" data-color="red" data-side="left" data-id="1"></div>
+                    <div class="point green" data-color="green" data-side="left" data-id="2"></div>
+                </div>
+                
+                <div class="points-container right-points" id="right-points">
+                    <div class="point orange" data-color="orange" data-side="right" data-id="0"></div>
+                    <div class="point red" data-color="red" data-side="right" data-id="1"></div>
+                    <div class="point green" data-color="green" data-side="right" data-id="2"></div>
+                </div>
+            </div>
+            
+            <div id="result-message-battle" class="result-message-battle"></div>
         </div>
     </div>
 

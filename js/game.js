@@ -37,6 +37,11 @@ export function initGame() {
         window.location.href = 'pages/upgrades.html';
     });
     
+    // Événement pour le bouton Attaquer
+    document.getElementById('attack-btn').addEventListener('click', () => {
+        window.location.href = 'pages/battle.html';
+    });
+    
     // Événement pour le bouton Quêtes
     document.getElementById('quest-btn').addEventListener('click', () => {
         document.getElementById('quest-panel').style.display = 'flex';
@@ -347,16 +352,30 @@ function claimQuest(questIndex) {
     
     // Récompenses
     if (questIndex === 0) {
-        // Quête 1 : +200$
+        // Quête 1 : +200$ et retirer Celebi
         gameState.money += 200;
-        alert('🎉 Vous avez gagné 200$ !');
+        
+        // Retirer Celebi du deck
+        const celebiIndex = gameState.deck.findIndex(card => card.name === "Celebi");
+        if (celebiIndex !== -1) {
+            gameState.deck.splice(celebiIndex, 1);
+        }
+        
+        alert('🎉 Vous avez gagné 200$ ! Celebi a quitté votre deck.');
         
         // Déverrouiller quête 2
         gameState.quests[1].unlocked = true;
     } else if (questIndex === 1) {
-        // Quête 2 : +2 places de deck
+        // Quête 2 : +2 places de deck et retirer Mega Dracaufeu
         gameState.maxDeckSize += 2;
-        alert(`🎉 Vous avez maintenant ${gameState.maxDeckSize} places dans votre deck !`);
+        
+        // Retirer Mega Dracaufeu du deck
+        const megaDracaufeuIndex = gameState.deck.findIndex(card => card.name === "Mega Dracaufeu");
+        if (megaDracaufeuIndex !== -1) {
+            gameState.deck.splice(megaDracaufeuIndex, 1);
+        }
+        
+        alert(`🎉 Vous avez maintenant ${gameState.maxDeckSize} places dans votre deck ! Mega Dracaufeu a quitté votre deck.`);
         
         // Déverrouiller quête 3
         gameState.quests[2].unlocked = true;
@@ -380,6 +399,263 @@ function claimQuest(questIndex) {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', initGame);
+
+// ===== LOGIQUE DU MINI-JEU DE COMBAT =====
+
+let battleTimer = 30;
+let battleTimerInterval = null;
+let selectedPoint = null;
+let connections = [];
+let gameActive = true;
+
+const colorMap = {
+    'orange': '#ff9a3c',
+    'red': '#ff6b6b',
+    'green': '#51cf66'
+};
+
+/**
+ * Initialise le jeu de combat
+ */
+function initBattle() {
+    const canvas = document.getElementById('game-canvas');
+    const container = document.querySelector('.cable-game');
+    
+    // Réinitialiser l'état
+    battleTimer = 30;
+    gameActive = true;
+    selectedPoint = null;
+    connections = [];
+    
+    // Ajuster la taille du canvas
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
+    
+    // Effacer le canvas
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Nettoyer les classes des points
+    document.querySelectorAll('.point').forEach(point => {
+        point.classList.remove('selected', 'connected');
+    });
+    
+    // Mélanger l'ordre des points à droite
+    shuffleRightPoints();
+    
+    // Nettoyer le message de résultat
+    document.getElementById('result-message-battle').textContent = '';
+    document.getElementById('result-message-battle').className = 'result-message-battle';
+    
+    // Événements sur les points
+    const points = document.querySelectorAll('.point');
+    points.forEach(point => {
+        point.replaceWith(point.cloneNode(true));
+    });
+    
+    document.querySelectorAll('.point').forEach(point => {
+        point.addEventListener('click', handlePointClick);
+    });
+    
+    // Démarrer le timer
+    startBattleTimer();
+}
+
+/**
+ * Mélange l'ordre des points à droite
+ */
+function shuffleRightPoints() {
+    const rightContainer = document.getElementById('right-points');
+    const points = Array.from(rightContainer.children);
+    
+    for (let i = points.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        rightContainer.appendChild(points[j]);
+    }
+}
+
+/**
+ * Démarre le timer de combat
+ */
+function startBattleTimer() {
+    updateBattleTimerDisplay();
+    
+    if (battleTimerInterval) {
+        clearInterval(battleTimerInterval);
+    }
+    
+    battleTimerInterval = setInterval(() => {
+        battleTimer--;
+        updateBattleTimerDisplay();
+        
+        if (battleTimer <= 0) {
+            endBattle(false);
+        }
+    }, 1000);
+}
+
+/**
+ * Met à jour l'affichage du timer de combat
+ */
+function updateBattleTimerDisplay() {
+    const timerElement = document.getElementById('timer-battle');
+    timerElement.textContent = battleTimer;
+}
+
+/**
+ * Gère le clic sur un point
+ */
+function handlePointClick(event) {
+    if (!gameActive) return;
+    
+    const point = event.target;
+    
+    if (point.classList.contains('connected')) return;
+    
+    if (!selectedPoint) {
+        selectedPoint = point;
+        point.classList.add('selected');
+    } else {
+        if (selectedPoint === point) {
+            selectedPoint.classList.remove('selected');
+            selectedPoint = null;
+            return;
+        }
+        
+        const color1 = selectedPoint.dataset.color;
+        const color2 = point.dataset.color;
+        const side1 = selectedPoint.dataset.side;
+        const side2 = point.dataset.side;
+        
+        if (color1 === color2 && side1 !== side2) {
+            createConnection(selectedPoint, point);
+            selectedPoint.classList.remove('selected');
+            selectedPoint.classList.add('connected');
+            point.classList.add('connected');
+            selectedPoint = null;
+            
+            checkWinCondition();
+        } else {
+            selectedPoint.classList.remove('selected');
+            selectedPoint = null;
+            
+            point.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                point.style.transform = '';
+            }, 200);
+        }
+    }
+}
+
+/**
+ * Crée une connexion entre deux points
+ */
+function createConnection(point1, point2) {
+    const color = point1.dataset.color;
+    connections.push({ point1, point2, color });
+    drawConnections();
+}
+
+/**
+ * Dessine toutes les connexions sur le canvas
+ */
+function drawConnections() {
+    const canvas = document.getElementById('game-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    connections.forEach(conn => {
+        const rect1 = conn.point1.getBoundingClientRect();
+        const rect2 = conn.point2.getBoundingClientRect();
+        const containerRect = canvas.getBoundingClientRect();
+        
+        const x1 = rect1.left + rect1.width / 2 - containerRect.left;
+        const y1 = rect1.top + rect1.height / 2 - containerRect.top;
+        const x2 = rect2.left + rect2.width / 2 - containerRect.left;
+        const y2 = rect2.top + rect2.height / 2 - containerRect.top;
+        
+        // Configurer l'ombre avant de dessiner
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        
+        const controlX = (x1 + x2) / 2;
+        ctx.quadraticCurveTo(controlX, y1, controlX, (y1 + y2) / 2);
+        ctx.quadraticCurveTo(controlX, y2, x2, y2);
+        
+        ctx.strokeStyle = colorMap[conn.color];
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+    });
+}
+
+/**
+ * Vérifie si toutes les connexions sont faites
+ */
+function checkWinCondition() {
+    const totalPoints = document.querySelectorAll('.point.connected').length;
+    const maxPoints = document.querySelectorAll('.point').length;
+    
+    if (totalPoints === maxPoints) {
+        endBattle(true);
+    }
+}
+
+/**
+ * Termine le jeu de combat
+ */
+function endBattle(won) {
+    gameActive = false;
+    if (battleTimerInterval) {
+        clearInterval(battleTimerInterval);
+    }
+    
+    const resultMessage = document.getElementById('result-message-battle');
+    
+    if (won) {
+        resultMessage.className = 'result-message-battle success';
+        resultMessage.textContent = `🎉 Victoire ! Vous avez connecté tous les câbles en ${30 - battleTimer} secondes !`;
+    } else {
+        resultMessage.className = 'result-message-battle failure';
+        resultMessage.textContent = '⏱️ Temps écoulé ! Vous avez perdu...';
+    }
+    
+    setTimeout(() => {
+        resultMessage.innerHTML += '<br><button onclick="location.reload()" style="margin-top: 15px; padding: 15px 40px; background: #1a4d2e; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer;">Rejouer</button>';
+    }, 1000);
+}
+
+/**
+ * Réinitialise le combat
+ */
+function resetBattle() {
+    gameActive = false;
+    if (battleTimerInterval) {
+        clearInterval(battleTimerInterval);
+    }
+    battleTimer = 30;
+    selectedPoint = null;
+    connections = [];
+    
+    const canvas = document.getElementById('game-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    // Nettoyer les classes des points
+    document.querySelectorAll('.point').forEach(point => {
+        point.classList.remove('selected', 'connected');
+    });
+}
 
 // Exposer sellCard globalement pour les boutons HTML
 window.sellCard = sellCard;

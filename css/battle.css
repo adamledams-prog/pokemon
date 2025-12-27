@@ -1,0 +1,426 @@
+/* Styles de la page de combat */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a4d2e 0%, #0a1f14 50%, #000000 100%);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-btn {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    display: block;
+    color: white;
+    font-size: 1.3em;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+/* Timer */
+.timer-display {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: white;
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #e74c3c;
+    z-index: 1000;
+}
+
+/* Container principal */
+.battle-container {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    max-width: 900px;
+    width: 100%;
+}
+
+.battle-container h1 {
+    color: #1a4d2e;
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.instructions {
+    color: #666;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+/* Jeu de câbles */
+.cable-game {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: #ffffff;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 3px solid #333;
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Points */
+.points-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 400px;
+    top: 50px;
+    z-index: 100;
+}
+
+.left-points {
+    left: 50px;
+}
+
+.right-points {
+    right: 50px;
+}
+
+.point {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 5px solid white;
+    position: relative;
+    z-index: 100;
+}
+
+.point:hover {
+    transform: scale(1.3);
+}
+
+.point.selected {
+    transform: scale(1.4);
+    box-shadow: 0 0 30px currentColor;
+    animation: pulse 0.5s infinite;
+}
+
+.point.connected {
+    opacity: 0.6;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1.4);
+    }
+    50% {
+        transform: scale(1.6);
+    }
+}
+
+/* Couleurs des points */
+.point.orange {
+    background: #ff9a3c;
+    box-shadow: 0 10px 25px rgba(255, 154, 60, 0.8);
+}
+
+.point.red {
+    background: #ff6b6b;
+    box-shadow: 0 10px 25px rgba(255, 107, 107, 0.8);
+}
+
+.point.green {
+    background: #51cf66;
+    box-shadow: 0 10px 25px rgba(81, 207, 102, 0.8);
+}
+
+/* Message de résultat */
+.result-message {
+    font-size: 1.8em;
+    font-weight: bold;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    min-height: 70px;
+}
+
+.result-message.success {
+    background: linear-gradient(135deg, #51cf66, #37b24d);
+    color: white;
+}
+
+.result-message.failure {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: white;
+}
+
+/* Mini-jeu 2 : Tir */
+#shooting-game {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.shooting-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.shooting-header {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 50px;
+    z-index: 100;
+}
+
+.shooting-score, .shooting-target, .shooting-timer {
+    background: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #2c3e50;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.shooting-timer {
+    color: #e74c3c;
+}
+
+#shooting-canvas {
+    border: 3px solid white;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: crosshair;
+}
+
+.shooting-gun {
+    position: absolute;
+    bottom: 30px;
+    font-size: 4em;
+    z-index: 100;
+}
+
+.shooting-result {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 200;
+}
+
+.shooting-result.success {
+    background: linear-gradient(135deg, #51cf66, #37b24d);
+    color: white;
+}
+
+.shooting-result h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+}
+
+@keyframes hitFloat {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Timer */
+.timer-display {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: white;
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #e74c3c;
+    z-index: 1000;
+}
+
+/* Container principal */
+.battle-container {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    max-width: 900px;
+    width: 100%;
+}
+
+.battle-container h1 {
+    color: #1a4d2e;
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.instructions {
+    color: #666;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+/* Jeu de câbles */
+.cable-game {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Points */
+.points-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.left-points {
+    left: 50px;
+}
+
+.right-points {
+    right: 50px;
+}
+
+.point {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 4px solid white;
+}
+
+.point:hover {
+    transform: scale(1.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.point.selected {
+    transform: scale(1.3);
+    box-shadow: 0 0 20px currentColor;
+    animation: pulse 0.5s infinite;
+}
+
+.point.connected {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1.3);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+}
+
+/* Couleurs des points */
+.point.orange {
+    background: linear-gradient(135deg, #ff9a3c, #ff6b35);
+}
+
+.point.red {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+}
+
+.point.green {
+    background: linear-gradient(135deg, #51cf66, #37b24d);
+}
+
+/* Message de résultat */
+.result-message {
+    font-size: 1.8em;
+    font-weight: bold;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    min-height: 70px;
+}
+
+.result-message.success {
+    background: linear-gradient(135deg, #51cf66, #37b24d);
+    color: white;
+}
+
+.result-message.failure {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+    color: white;
+}
