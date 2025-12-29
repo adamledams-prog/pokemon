@@ -5,6 +5,7 @@ import { loadGameState, saveGameState } from './storage.js';
 
 // État du jeu
 let gameState = null;
+let selectedCardsForBattle = [];
 
 /**
  * Fonction pour assombrir ou éclaircir une couleur hex
@@ -26,6 +27,20 @@ function shadeColor(color, percent) {
 export function initGame() {
     gameState = loadGameState();
     
+    // Migration : Mettre à jour Super Mario de 50$/s à 30$/s
+    let needsSave = false;
+    gameState.deck.forEach(card => {
+        if (card.name === "Super Mario" && card.income === 50) {
+            card.income = 30;
+            needsSave = true;
+        }
+    });
+    
+    if (needsSave) {
+        saveGameState(gameState);
+        console.log('✅ Migration: Super Mario mis à jour vers 30$/s');
+    }
+    
     renderDeck();
     updateMoney();
     startIncomeGeneration();
@@ -39,7 +54,14 @@ export function initGame() {
     
     // Événement pour le bouton Attaquer
     document.getElementById('attack-btn').addEventListener('click', () => {
-        window.location.href = 'pages/battle.html';
+        if (selectedCardsForBattle.length === 4) {
+            // Sauvegarder les cartes sélectionnées pour le combat
+            const selectedCards = selectedCardsForBattle.map(index => gameState.deck[index]);
+            localStorage.setItem('battleCards', JSON.stringify(selectedCards));
+            window.location.href = 'pages/battle.html';
+        } else {
+            alert('⚠️ Sélectionnez 4 cartes pour attaquer !');
+        }
     });
     
     // Événement pour le bouton Quêtes
@@ -173,15 +195,60 @@ function renderDeck() {
         const rarityStyle = RARITY_STYLES[card.rarity] || RARITY_STYLES["Épique"];
         const bgColor = rarityStyle.color;
         const darkerColor = shadeColor(bgColor, -20);
+        const isSelected = selectedCardsForBattle.includes(index);
         return `
-        <div class="deck-card" style="background: linear-gradient(135deg, ${bgColor}, ${darkerColor});">
+        <div class="deck-card ${isSelected ? 'selected-for-battle' : ''}" style="background: linear-gradient(135deg, ${bgColor}, ${darkerColor});">
             <div class="deck-card-name">${card.name}</div>
             <div class="card-rarity">${rarityStyle.emoji} ${card.rarity}</div>
             <div class="deck-card-income">+${card.income}$/s</div>
+            <button class="select-battle-btn" onclick="window.toggleCardSelection(${index})">
+                ${isSelected ? '✔️ Sélectionné' : '⚔️ Sélectionner'}
+            </button>
             <button class="sell-btn" onclick="window.sellCard(${index})">Vendre (${GAME_CONFIG.SELL_PRICE}$)</button>
         </div>
     `;
     }).join('');
+    
+    updateAttackButton();
+}
+
+/**
+ * Sélectionne ou désélectionne une carte pour le combat
+ */
+export function toggleCardSelection(index) {
+    const cardIndex = selectedCardsForBattle.indexOf(index);
+    
+    if (cardIndex > -1) {
+        // Désélectionner
+        selectedCardsForBattle.splice(cardIndex, 1);
+    } else {
+        // Sélectionner si moins de 4 cartes
+        if (selectedCardsForBattle.length < 4) {
+            selectedCardsForBattle.push(index);
+        }
+    }
+    
+    renderDeck();
+}
+
+/**
+ * Met à jour l'état du bouton Attaquer
+ */
+function updateAttackButton() {
+    const attackBtn = document.getElementById('attack-btn');
+    const selectedCount = document.getElementById('selected-count');
+    
+    selectedCount.textContent = selectedCardsForBattle.length;
+    
+    if (selectedCardsForBattle.length === 4) {
+        attackBtn.disabled = false;
+        attackBtn.style.opacity = '1';
+        attackBtn.style.cursor = 'pointer';
+    } else {
+        attackBtn.disabled = true;
+        attackBtn.style.opacity = '0.5';
+        attackBtn.style.cursor = 'not-allowed';
+    }
 }
 
 /**
@@ -294,7 +361,7 @@ function renderQuests() {
             id: 3,
             title: "⭐ Quête Ultime",
             description: "Avoir 4000$ + 4 Légendaires + 2 Mega dans le deck",
-            reward: "⚫ Super Mario (Secret: +50$/s)",
+            reward: "⚫ Super Mario (Secret: +30$/s)",
             check: () => {
                 const legendaryCount = gameState.deck.filter(card => card.rarity === "Légendaire").length;
                 const megaCount = gameState.deck.filter(card => card.rarity === "Mega").length;
@@ -387,7 +454,7 @@ function claimQuest(questIndex) {
                 ...superMario,
                 purchaseId: Date.now() + Math.random()
             });
-            alert('🎉 Vous avez débloqué Super Mario ! Carte Secret : +50$/s');
+            alert('🎉 Vous avez débloqué Super Mario ! Carte Secret : +30$/s');
         }
     }
     
@@ -657,6 +724,7 @@ function resetBattle() {
     });
 }
 
-// Exposer sellCard globalement pour les boutons HTML
+// Exposer sellCard et autres fonctions globalement pour les boutons HTML
 window.sellCard = sellCard;
 window.claimQuest = claimQuest;
+window.toggleCardSelection = toggleCardSelection;

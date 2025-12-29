@@ -248,7 +248,7 @@ function startShootingGame() {
             <div class="shooting-header">
                 <div class="shooting-timer">⏱️ <span id="shooting-timer">10</span>s</div>
                 <div class="shooting-score">Score Total: <span id="shooting-score">${game1Score}</span></div>
-                <div class="shooting-target">Objectif: 100 points</div>
+                <div class="shooting-target">Tirez le plus de points possible !</div>
             </div>
             <canvas id="shooting-canvas"></canvas>
             <div class="shooting-gun">🔫</div>
@@ -274,7 +274,7 @@ function startShootingGame() {
         
         if (shootingTimer <= 0) {
             clearInterval(shootingTimerInterval);
-            endShootingGame(shootingScore >= 100);
+            endShootingGame(true); // Toujours gagner après les 10 secondes
         }
     }, 1000);
     
@@ -391,11 +391,6 @@ function handleShoot(event) {
             
             fallingObjects.splice(i, 1);
             updateShootingScore();
-            
-            // Vérifier la victoire
-            if (shootingScore >= 100) {
-                endShootingGame(true);
-            }
             break;
         }
     }
@@ -438,16 +433,347 @@ function endShootingGame(won) {
     shootingActive = false;
     cancelAnimationFrame(animationId);
     
-    const resultDiv = document.getElementById('shooting-result');
+    // Toujours afficher les récompenses
+    // Récupérer les 4 cartes sélectionnées
+    const battleCards = JSON.parse(localStorage.getItem('battleCards') || '[]');
     
-    if (won) {
-        resultDiv.className = 'shooting-result success';
-        resultDiv.innerHTML = `
-            <h2>🎉 VICTOIRE TOTALE !</h2>
-            <p>Vous avez terminé les 2 mini-jeux !</p>
-            <button onclick="location.href='../index.html'" style="margin-top: 20px; padding: 15px 40px; background: white; color: #1a4d2e; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer;">Retour au jeu</button>
-        `;
+    // Générer 2 cartes aléatoires
+    const randomCards = [];
+    for (let i = 0; i < 2; i++) {
+        randomCards.push(generateRandomRewardCard());
     }
+    
+    // Combiner toutes les cartes
+    const allRewardCards = [...battleCards, ...randomCards];
+    
+    // Sauvegarder toutes les 6 cartes pour les récupérer plus tard
+    localStorage.setItem('allRewardCards', JSON.stringify(allRewardCards));
+    
+    // Afficher les 6 cartes
+    displayRewardCards(allRewardCards);
+}
+
+/**
+ * Génère une carte aléatoire selon les probabilités
+ */
+function generateRandomRewardCard() {
+    const random = Math.random();
+    let rarity;
+    
+    if (random < 0.05) {
+        // 5% Secret
+        rarity = 'Secret';
+    } else if (random < 0.20) {
+        // 15% Mega (0.05 à 0.20)
+        rarity = 'Mega';
+    } else if (random < 0.60) {
+        // 40% Mythique (0.20 à 0.60)
+        rarity = 'Mythique';
+    } else {
+        // 40% Légendaire (0.60 à 1.0)
+        rarity = 'Légendaire';
+    }
+    
+    // Liste simplifiée des cartes disponibles
+    const cardsDatabase = [
+        { name: "Arceus", rarity: "Légendaire", income: 7 },
+        { name: "Mew", rarity: "Légendaire", income: 7 },
+        { name: "Celebi", rarity: "Légendaire", income: 7 },
+        { name: "Mewtwo", rarity: "Mythique", income: 5 },
+        { name: "Lugia", rarity: "Mythique", income: 5 },
+        { name: "Ho-Oh", rarity: "Mythique", income: 5 },
+        { name: "Rayquaza", rarity: "Mythique", income: 5 },
+        { name: "Mega Dracaufeu", rarity: "Mega", income: 15 },
+        { name: "Mega Mewtwo", rarity: "Mega", income: 15 },
+        { name: "Mega Rayquaza", rarity: "Mega", income: 15 },
+        { name: "Super Mario", rarity: "Secret", income: 30 }
+    ];
+    
+    const availableCards = cardsDatabase.filter(card => card.rarity === rarity);
+    return availableCards[Math.floor(Math.random() * availableCards.length)];
+}
+
+/**
+ * Affiche les cartes de récompense
+ */
+function displayRewardCards(cards) {
+    const shootingGame = document.getElementById('shooting-game');
+    
+    // Récupérer l'état du jeu
+    const gameState = JSON.parse(localStorage.getItem('idleCardGame'));
+    
+    // Calculer le revenu des 6 cartes affichées
+    const displayedCardsIncome = cards.reduce((sum, card) => sum + (card.income || 0), 0);
+    
+    // Calculer le total (score des épreuves + revenu des 6 cartes)
+    const totalScore = shootingScore + displayedCardsIncome;
+    
+    shootingGame.innerHTML = `
+        <div class="reward-container">
+            <div class="money-display">💰 ${displayedCardsIncome}$/s</div>
+            <div class="score-display-top">🎯 Score: ${shootingScore}</div>
+            <div class="total-display">🏆 Total: ${totalScore}</div>
+            <h1>🎉 Victoire ! Vos Récompenses</h1>
+            <p class="reward-subtitle">Vos 4 cartes + 2 cartes bonus !</p>
+            <div class="reward-cards">
+                ${cards.map((card, index) => {
+                    const colors = {
+                        'Légendaire': '#f1c40f',
+                        'Mega': '#3498db',
+                        'Secret': '#1a1a1a',
+                        'Épique': '#9b59b6',
+                        'Mythique': '#e74c3c'
+                    };
+                    const bgColor = colors[card.rarity] || '#9b59b6';
+                    const isBonus = index >= 4;
+                    const delay = index * 0.2;
+                    return `
+                        <div class="reward-card ${isBonus ? 'bonus-card' : 'chosen-card'}" style="background: linear-gradient(135deg, ${bgColor}, ${adjustColor(bgColor, -20)}); animation-delay: ${delay}s;">
+                            ${isBonus ? '<div class="bonus-badge">🎁 BONUS</div>' : '<div class="chosen-badge">⭐ CHOISI</div>'}
+                            <div class="reward-card-name">${card.name}</div>
+                            <div class="reward-card-rarity">${card.rarity}</div>
+                            <div class="reward-card-income">+${card.income}$/s</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            <div class="wheel-section">
+                <div class="wheel-container">
+                    <canvas id="wheel-canvas" width="300" height="300"></canvas>
+                    <button id="spin-wheel-btn" class="spin-btn" onclick="spinWheel(${totalScore})">TOURNER LA ROUE</button>
+                </div>
+                <div id="wheel-result" class="wheel-result"></div>
+            </div>
+            <button onclick="applyRewardsAndReturn()" class="return-btn">Retour au jeu</button>
+        </div>
+    `;
+    
+    // Dessiner la roue
+    drawWheel();
+}
+
+/**
+ * Applique les récompenses et retourne au jeu
+ */
+window.applyRewardsAndReturn = function() {
+    // Récupérer l'état du jeu
+    const gameState = JSON.parse(localStorage.getItem('idleCardGame'));
+    
+    // Récupérer toutes les cartes de récompense
+    const allRewardCards = JSON.parse(localStorage.getItem('allRewardCards') || '[]');
+    const bonusCards = allRewardCards.slice(4, 6); // Les 2 dernières cartes sont les bonus
+    
+    // Récupérer la carte de la roue si elle existe
+    const wheelCard = JSON.parse(localStorage.getItem('wheelCard') || 'null');
+    
+    // Récupérer les indices des cartes sélectionnées
+    const selectedIndices = JSON.parse(localStorage.getItem('selectedCardsForBattle') || '[]');
+    
+    // Supprimer 2 des 4 cartes sélectionnées (les 2 premières)
+    const indicesToRemove = selectedIndices.slice(0, 2).sort((a, b) => b - a); // Trier en ordre décroissant
+    indicesToRemove.forEach(index => {
+        gameState.deck.splice(index, 1);
+    });
+    
+    // Ajouter les 2 cartes bonus au deck
+    gameState.deck.push(...bonusCards);
+    
+    // Ajouter la carte de la roue si elle existe et supprimer une carte aléatoire
+    if (wheelCard) {
+        // Supprimer une carte aléatoire du deck (qui n'était pas dans les cartes sélectionnées)
+        if (gameState.deck.length > 0) {
+            const randomIndex = Math.floor(Math.random() * gameState.deck.length);
+            gameState.deck.splice(randomIndex, 1);
+        }
+        
+        // Ajouter la carte de la roue
+        gameState.deck.push(wheelCard);
+    }
+    
+    // Sauvegarder l'état
+    localStorage.setItem('idleCardGame', JSON.stringify(gameState));
+    
+    // Nettoyer les données de bataille
+    localStorage.removeItem('battleCards');
+    localStorage.removeItem('selectedCardsForBattle');
+    localStorage.removeItem('allRewardCards');
+    localStorage.removeItem('wheelCard');
+    
+    // Rediriger
+    location.href = '../index.html';
+};
+
+/**
+ * Ajuste la couleur
+ */
+function adjustColor(color, percent) {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+    const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+    const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+    return '#' + ((R << 16) | (G << 8) | B).toString(16).padStart(6, '0');
+}
+
+/**
+ * Dessine la roue
+ */
+function drawWheel() {
+    const canvas = document.getElementById('wheel-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 140;
+    
+    const colors = ['#f1c40f', '#3498db', '#1a1a1a', '#e74c3c'];
+    const labels = ['Légendaire', 'Mega', 'Secret', 'Mythique'];
+    const sections = 4;
+    const anglePerSection = (Math.PI * 2) / sections;
+    
+    for (let i = 0; i < sections; i++) {
+        ctx.beginPath();
+        ctx.fillStyle = colors[i];
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, i * anglePerSection, (i + 1) * anglePerSection);
+        ctx.lineTo(centerX, centerY);
+        ctx.fill();
+        
+        // Texte
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(i * anglePerSection + anglePerSection / 2);
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(labels[i], radius / 2 - 20, 5);
+        ctx.restore();
+    }
+    
+    // Centre
+    ctx.beginPath();
+    ctx.fillStyle = 'white';
+    ctx.arc(centerX, centerY, 20, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+let wheelSpinning = false;
+let wheelRotation = 0;
+
+/**
+ * Tourne la roue
+ */
+window.spinWheel = function(totalScore) {
+    if (wheelSpinning) return;
+    
+    wheelSpinning = true;
+    const button = document.getElementById('spin-wheel-btn');
+    button.disabled = true;
+    button.textContent = 'TOURNAGE...';
+    
+    // Déterminer la rareté selon le score
+    let targetRarity;
+    if (totalScore < 120) {
+        targetRarity = 'Légendaire';
+    } else if (totalScore <= 170) {
+        targetRarity = 'Mega';
+    } else {
+        targetRarity = 'Secret';
+    }
+    
+    const canvas = document.getElementById('wheel-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Animation de rotation
+    let spins = 0;
+    const totalSpins = 5 + Math.random() * 3; // 5-8 tours
+    const spinSpeed = 20;
+    
+    const rarityAngles = {
+        'Légendaire': 0,
+        'Mega': Math.PI / 2,
+        'Secret': Math.PI,
+        'Mythique': Math.PI * 1.5
+    };
+    
+    const targetAngle = rarityAngles[targetRarity] + (Math.random() * 0.3 - 0.15);
+    
+    function animate() {
+        if (spins < totalSpins) {
+            wheelRotation += spinSpeed * (1 - spins / totalSpins);
+            spins += 0.02;
+            
+            // Redessiner
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(wheelRotation * Math.PI / 180);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+            drawWheel();
+            ctx.restore();
+            
+            requestAnimationFrame(animate);
+        } else {
+            // Arrêter sur la bonne section
+            wheelRotation = (targetAngle * 180 / Math.PI) % 360;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(wheelRotation * Math.PI / 180);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+            drawWheel();
+            ctx.restore();
+            
+            // Afficher le résultat et ajouter la carte
+            setTimeout(() => {
+                showWheelResult(targetRarity);
+            }, 500);
+        }
+    }
+    
+    animate();
+};
+
+/**
+ * Affiche le résultat de la roue et ajoute la carte au deck
+ */
+function showWheelResult(rarity) {
+    const resultDiv = document.getElementById('wheel-result');
+    
+    // Générer une carte de cette rareté
+    const cardsDatabase = [
+        { name: "Arceus", rarity: "Légendaire", income: 7 },
+        { name: "Mew", rarity: "Légendaire", income: 7 },
+        { name: "Celebi", rarity: "Légendaire", income: 7 },
+        { name: "Mega Dracaufeu", rarity: "Mega", income: 15 },
+        { name: "Mega Mewtwo", rarity: "Mega", income: 15 },
+        { name: "Mega Rayquaza", rarity: "Mega", income: 15 },
+        { name: "Super Mario", rarity: "Secret", income: 30 }
+    ];
+    
+    const availableCards = cardsDatabase.filter(card => card.rarity === rarity);
+    const wonCard = availableCards[Math.floor(Math.random() * availableCards.length)];
+    
+    const colors = {
+        'Légendaire': '#f1c40f',
+        'Mega': '#3498db',
+        'Secret': '#1a1a1a'
+    };
+    
+    resultDiv.innerHTML = `
+        <div class="wheel-win-card" style="background: linear-gradient(135deg, ${colors[rarity]}, ${adjustColor(colors[rarity], -20)});">
+            <h3>🎉 Vous avez gagné !</h3>
+            <div class="wheel-card-name">${wonCard.name}</div>
+            <div class="wheel-card-rarity">${wonCard.rarity}</div>
+            <div class="wheel-card-income">+${wonCard.income}$/s</div>
+        </div>
+    `;
+    
+    // Ajouter la carte au localStorage pour l'ajouter au deck
+    const wheelCard = JSON.parse(localStorage.getItem('wheelCard') || 'null');
+    localStorage.setItem('wheelCard', JSON.stringify(wonCard));
+    
+    wheelSpinning = false;
 }
 
 // Initialisation au chargement

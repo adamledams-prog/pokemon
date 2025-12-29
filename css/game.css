@@ -226,6 +226,13 @@ body {
     min-width: 180px;
     animation: cardAppear 0.5s;
     position: relative;
+    transition: all 0.3s;
+}
+
+.deck-card.selected-for-battle {
+    border: 4px solid #f1c40f;
+    box-shadow: 0 0 20px rgba(241, 196, 15, 0.8);
+    transform: scale(1.05);
 }
 
 .deck-card-name {
@@ -236,6 +243,32 @@ body {
 .deck-card-income {
     font-size: 0.9em;
     color: #b4f8c8;
+}
+
+.select-battle-btn {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.select-battle-btn:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+}
+
+.selected-for-battle .select-battle-btn {
+    background: #27ae60;
+}
+
+.selected-for-battle .select-battle-btn:hover {
+    background: #229954;
 }
 
 .sell-btn {

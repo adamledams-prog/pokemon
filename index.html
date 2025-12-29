@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jeu de Collection de Cartes</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
     <button id="place-btn" class="place-btn">Place</button>
     <button id="quest-btn" class="quest-btn">🎯 Quêtes</button>
-    <button id="attack-btn" class="attack-btn">⚔️ Attaquer</button>
+    <button id="attack-btn" class="attack-btn" disabled>⚔️ Attaquer (<span id="selected-count">0</span>/4)</button>
 
     <div class="shop-container">
         <h2>🛒 Boutique</h2>

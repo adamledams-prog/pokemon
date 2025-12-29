@@ -38,6 +38,21 @@ body {
     transform: scale(1.05);
 }
 
+/* Score display */
+.score-display {
+    position: fixed;
+    top: 130px;
+    left: 30px;
+    background: white;
+    padding: 25px 50px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    font-size: 3em;
+    font-weight: bold;
+    color: #27ae60;
+    z-index: 1000;
+}
+
 /* Timer */
 .timer-display {
     position: fixed;
@@ -277,6 +292,378 @@ body {
     100% {
         transform: translateY(-50px) scale(1.5);
         opacity: 0;
+    }
+}
+
+/* Écran de récompense */
+.reward-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: linear-gradient(135deg, #1a4d2e 0%, #0a1f14 100%);
+    position: relative;
+}
+
+.money-display {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    padding: 25px 50px;
+    border-radius: 20px;
+    font-size: 3em;
+    font-weight: bold;
+    color: #000;
+    box-shadow: 0 10px 40px rgba(241, 196, 15, 0.6);
+    animation: moneyPulse 1.5s infinite;
+    z-index: 1000;
+}
+
+.score-display-top {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    z-index: 1000;
+}
+
+.total-display {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    padding: 25px 50px;
+    border-radius: 20px;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 10px 40px rgba(231, 76, 60, 0.6);
+    animation: totalPulse 1.5s infinite;
+    z-index: 1000;
+}
+
+.reward-timer {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: white;
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+    font-weight: bold;
+    color: #e74c3c;
+    z-index: 1000;
+}
+
+.reward-container h1 {
+    color: white;
+    font-size: 3.5em;
+    margin-bottom: 10px;
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.reward-subtitle {
+    color: #f1c40f;
+    font-size: 1.5em;
+    margin-bottom: 40px;
+    font-weight: bold;
+}
+
+.reward-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.reward-card {
+    padding: 30px;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    min-width: 220px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    animation: cardAppear 0.8s ease-out backwards;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s;
+}
+
+.reward-card:hover {
+    transform: translateY(-10px) scale(1.05);
+}
+
+.reward-card.bonus-card {
+    border: 5px solid #f1c40f;
+    animation: bonusAppear 1s ease-out backwards, bonusGlow 2s infinite;
+    transform: scale(1.05);
+}
+
+.reward-card.chosen-card {
+    border: 5px solid #fff;
+    animation: chosenAppear 0.8s ease-out backwards, chosenGlow 2s infinite;
+}
+
+.bonus-badge, .chosen-badge {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1em;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    animation: badgePulse 1.5s infinite;
+}
+
+.bonus-badge {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    color: #000;
+}
+
+.chosen-badge {
+    background: linear-gradient(135deg, #fff, #e0e0e0);
+    color: #1a4d2e;
+}
+
+.reward-card-name {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.reward-card-rarity {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.reward-card-income {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #b4f8c8;
+}
+
+.return-btn {
+    padding: 20px 60px;
+    background: white;
+    color: #1a4d2e;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s;
+    margin-top: 20px;
+}
+
+.return-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Roue de la chance */
+.wheel-section {
+    margin: 40px 0;
+    text-align: center;
+}
+
+.wheel-section h2 {
+    color: white;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+.wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+#wheel-canvas {
+    border: 5px solid white;
+    border-radius: 50%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    background: white;
+}
+
+.spin-btn {
+    padding: 20px 60px;
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    color: #000;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.8em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(241, 196, 15, 0.6);
+    transition: all 0.3s;
+    text-transform: uppercase;
+}
+
+.spin-btn:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: 0 10px 30px rgba(241, 196, 15, 1);
+}
+
+.spin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.wheel-result {
+    margin-top: 30px;
+    min-height: 100px;
+}
+
+.wheel-win-card {
+    display: inline-block;
+    padding: 30px 50px;
+    border-radius: 20px;
+    color: white;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    animation: wheelCardAppear 0.8s ease-out;
+}
+
+.wheel-win-card h3 {
+    font-size: 2em;
+    margin-bottom: 15px;
+}
+
+.wheel-card-name {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.wheel-card-rarity {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.wheel-card-income {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #b4f8c8;
+}
+
+@keyframes wheelCardAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(50px);
+    }
+    60% {
+        transform: scale(1.1) translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes cardAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) translateY(100px) rotateY(180deg);
+    }
+    60% {
+        transform: scale(1.1) translateY(-10px) rotateY(0deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0) rotateY(0deg);
+    }
+}
+
+@keyframes bonusAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(-180deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1.05) rotate(0deg);
+    }
+}
+
+@keyframes chosenAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(50px);
+    }
+    60% {
+        transform: scale(1.1) translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes bonusGlow {
+    0%, 100% {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(241, 196, 15, 0.6);
+    }
+    50% {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 60px rgba(241, 196, 15, 1);
+    }
+}
+
+@keyframes chosenGlow {
+    0%, 100% {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.8);
+    }
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes moneyPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 40px rgba(241, 196, 15, 0.6);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 15px 50px rgba(241, 196, 15, 1);
+    }
+}
+
+@keyframes totalPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 40px rgba(231, 76, 60, 0.6);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 15px 50px rgba(231, 76, 60, 1);
     }
 }
 

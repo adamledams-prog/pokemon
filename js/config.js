@@ -28,7 +28,7 @@ export const CARDS_DATABASE = [
     { name: "Mega Dracaufeu", rarity: "Mega", price: 200, income: 15 },
     { name: "Mega Mewtwo", rarity: "Mega", price: 200, income: 15 },
     { name: "Mega Rayquaza", rarity: "Mega", price: 200, income: 15 },
-    { name: "Super Mario", rarity: "Secret", price: 0, income: 50 },
+    { name: "Super Mario", rarity: "Secret", price: 0, income: 30 },
 ];
 
 // Styles de rareté
